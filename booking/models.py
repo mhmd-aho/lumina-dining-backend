@@ -24,4 +24,9 @@ class Booking(models.Model):
     booking_time = models.DateTimeField()
     guests = models.IntegerField()
     def __str__(self):
-        return self.booking_time
+        return f"booking for {self.user.username} at {self.booking_time}"
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.user.username} like {self.menu_item.name}"

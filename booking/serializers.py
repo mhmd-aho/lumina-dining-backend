@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, MenuItem, Table, Booking
+from .models import Category, MenuItem, Table, Booking, Favorite
 from django.utils import timezone
 from datetime import timedelta
 class CategorySerializer(serializers.ModelSerializer):
@@ -45,4 +45,18 @@ class BookingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Number of guests exceeds table capacity")
         if attrs['booking_time'] < timezone.now():
             raise serializers.ValidationError("Booking time cannot be in the past")
+        return attrs
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    menu_item = MenuItemSerializer(read_only=True)
+    class Meta:
+        model = Favorite
+        fields = ['id', 'user', 'menu_item']
+        read_only_fields = ['user']
+    def validate(self, attrs):
+        user = self.context['request'].user
+        menu_item = attrs['menu_item']
+        if Favorite.objects.filter(user=user, menu_item=menu_item).exists():
+            raise serializers.ValidationError("You have already favorited this menu item")
         return attrs

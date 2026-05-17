@@ -132,7 +132,8 @@ STATIC_URL = 'static/'
 DJOSER = {
     'USER_ID_FIELD': 'username',
     'LOGIN_FIELD': 'username',
-    'PASSWORD_RETYPE':True
+    'SET_PASSWORD_RETYPE':True,
+    'USER_CREATE_PASSWORD_RETYPE':True
 }
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')

@@ -50,9 +50,10 @@ class BookingSerializer(serializers.ModelSerializer):
 class FavoriteSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     menu_item = MenuItemSerializer(read_only=True)
+    item_id = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all(), write_only=True,source="menu_item")
     class Meta:
         model = Favorite
-        fields = ['id', 'user', 'menu_item']
+        fields = ['id', 'user', 'menu_item','item_id']
         read_only_fields = ['user']
     def validate(self, attrs):
         user = self.context['request'].user
@@ -60,3 +61,4 @@ class FavoriteSerializer(serializers.ModelSerializer):
         if Favorite.objects.filter(user=user, menu_item=menu_item).exists():
             raise serializers.ValidationError("You have already favorited this menu item")
         return attrs
+        

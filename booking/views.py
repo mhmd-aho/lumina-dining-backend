@@ -18,6 +18,17 @@ class MenuItemsView(generics.ListAPIView):
 class TableView(generics.ListAPIView):
     queryset = Table.objects.all()
     serializer_class = TableSerializer
+class BookingListView(generics.ListAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        Booking.delete_expired_bookings()
+        start_time= self.request.query_params.get('start_time')
+        end_time= self.request.query_params.get('end_time')
+        if start_time and end_time:
+            return Booking.objects.filter(booking_time__range=[start_time, end_time])
+        return Booking.objects.all()
 class BookingView(generics.ListCreateAPIView):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
